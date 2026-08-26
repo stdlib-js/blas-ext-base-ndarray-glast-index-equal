@@ -41,38 +41,32 @@ limitations under the License.
 
 <!-- /.intro -->
 
+<section class="installation">
 
+## Installation
+
+```bash
+npm install @stdlib/blas-ext-base-ndarray-glast-index-equal
+```
+
+Alternatively,
+
+-   To load the package in a website via a `script` tag without installation and bundlers, use the [ES Module][es-module] available on the [`esm`][esm-url] branch (see [README][esm-readme]).
+-   If you are using Deno, visit the [`deno`][deno-url] branch (see [README][deno-readme] for usage intructions).
+-   For use in Observable, or in browser/node environments, use the [Universal Module Definition (UMD)][umd] build available on the [`umd`][umd-url] branch (see [README][umd-readme]).
+
+The [branches.md][branches-url] file summarizes the available branches and displays a diagram illustrating their relationships.
+
+To view installation and usage instructions specific to each branch build, be sure to explicitly navigate to the respective README files on each branch, as linked to above.
+
+</section>
 
 <section class="usage">
 
 ## Usage
 
-To use in Observable,
-
 ```javascript
-glastIndexEqual = require( 'https://cdn.jsdelivr.net/gh/stdlib-js/blas-ext-base-ndarray-glast-index-equal@umd/browser.js' )
-```
-
-To vendor stdlib functionality and avoid installing dependency trees for Node.js, you can use the UMD server build:
-
-```javascript
-var glastIndexEqual = require( 'path/to/vendor/umd/blas-ext-base-ndarray-glast-index-equal/index.js' )
-```
-
-To include the bundle in a webpage,
-
-```html
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/stdlib-js/blas-ext-base-ndarray-glast-index-equal@umd/browser.js"></script>
-```
-
-If no recognized module system is present, access bundle contents via the global scope:
-
-```html
-<script type="text/javascript">
-(function () {
-    window.glastIndexEqual;
-})();
-</script>
+var glastIndexEqual = require( '@stdlib/blas-ext-base-ndarray-glast-index-equal' );
 ```
 
 #### glastIndexEqual( arrays )
@@ -80,12 +74,17 @@ If no recognized module system is present, access bundle contents via the global
 Returns the index of the last element in a one-dimensional ndarray equal to a corresponding element in another one-dimensional ndarray.
 
 ```javascript
+var scalar2ndarray = require( '@stdlib/ndarray-from-scalar' );
 var vector = require( '@stdlib/ndarray-vector-ctor' );
 
 var x = vector( [ 1.0, 2.0, 3.0, 4.0 ], 'generic' );
 var y = vector( [ 0.0, 0.0, 3.0, 0.0 ], 'generic' );
 
-var idx = glastIndexEqual( [ x, y ] );
+var fromIndex = scalar2ndarray( 3, {
+    'dtype': 'generic'
+});
+
+var idx = glastIndexEqual( [ x, y, fromIndex ] );
 // returns 2
 ```
 
@@ -95,16 +94,22 @@ The function has the following parameters:
 
     -   first one-dimensional input ndarray.
     -   second one-dimensional input ndarray.
+    -   a zero-dimensional ndarray containing the index from which to begin searching.
 
 If the function is unable to find matching elements, the function returns `-1`.
 
 ```javascript
+var scalar2ndarray = require( '@stdlib/ndarray-from-scalar' );
 var vector = require( '@stdlib/ndarray-vector-ctor' );
 
 var x = vector( [ 1.0, 2.0, 3.0, 4.0 ], 'generic' );
 var y = vector( [ 5.0, 6.0, 7.0, 8.0 ], 'generic' );
 
-var idx = glastIndexEqual( [ x, y ] );
+var fromIndex = scalar2ndarray( 3, {
+    'dtype': 'generic'
+});
+
+var idx = glastIndexEqual( [ x, y, fromIndex ] );
 // returns -1
 ```
 
@@ -116,6 +121,7 @@ var idx = glastIndexEqual( [ x, y ] );
 
 ## Notes
 
+-   If a specified starting search index is negative, the function resolves the starting search index by counting backward from the last element (where `-1` refers to the last element).
 -   When comparing elements, the function checks for equality using the strict equality operator `===`. As a consequence, `NaN` values are considered distinct, and `-0` and `+0` are considered the same.
 
 </section>
@@ -128,15 +134,11 @@ var idx = glastIndexEqual( [ x, y ] );
 
 <!-- eslint no-undef: "error" -->
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-<body>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/stdlib-js/random-discrete-uniform@umd/browser.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/stdlib-js/ndarray-to-array@umd/browser.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/stdlib-js/blas-ext-base-ndarray-glast-index-equal@umd/browser.js"></script>
-<script type="text/javascript">
-(function () {
+```javascript
+var discreteUniform = require( '@stdlib/random-discrete-uniform' );
+var scalar2ndarray = require( '@stdlib/ndarray-from-scalar' );
+var ndarray2array = require( '@stdlib/ndarray-to-array' );
+var glastIndexEqual = require( '@stdlib/blas-ext-base-ndarray-glast-index-equal' );
 
 var opts = {
     'dtype': 'generic'
@@ -147,13 +149,12 @@ console.log( ndarray2array( x ) );
 var y = discreteUniform( [ 10 ], 0, 10, opts );
 console.log( ndarray2array( y ) );
 
-var idx = glastIndexEqual( [ x, y ] );
-console.log( idx );
+var fromIndex = scalar2ndarray( 9, {
+    'dtype': 'generic'
+});
 
-})();
-</script>
-</body>
-</html>
+var idx = glastIndexEqual( [ x, y, fromIndex ] );
+console.log( idx );
 ```
 
 </section>
